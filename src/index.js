@@ -85,16 +85,6 @@ class Model {
   }
   
   /**
-   * Determine if an attribute exists on the model
-   * 
-   * @param {String} attr
-   * @return boolean
-   */
-  has(attr) {
-    return !!this.get(attr)
-  }
-  
-  /**
    * Unset one or many attributes
    * 
    * @param {String|Array} attr
@@ -183,7 +173,8 @@ class Model {
 }
 
 // underscore methods
-['keys', 'values', 'pairs', 'invert', 'pick', 'omit', 'isEmpty'].forEach(fn => {
+['keys', 'values', 'pairs', 'invert', 'pick', 'omit', 'isEmpty', 'has']
+.forEach(fn => {
   Model.prototype[fn] = function () { return _[fn](this.data, ...arguments) }
 })
 
