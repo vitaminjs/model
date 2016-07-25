@@ -16,7 +16,18 @@ class Model {
     this.data = {}
     this.original = {}
     
+    _.assign(this.data, _.result(this, 'defaults'))
+    
     this.fill(data)
+  }
+  
+  /**
+   * Model default attributes
+   * 
+   * @type {Object}
+   */
+  get defaults() {
+    return {}
   }
   
   /**
@@ -90,14 +101,24 @@ class Model {
    * @param {Boolean} sync
    * @return this model
    */
-  unset(attr, sync) {
+  unset(attr, sync = false) {
     if (! _.isArray(attr) ) attr = [attr]
     
-    attr.forEach(key => this.data[key] = undefined)
+    attr.forEach(key => { this.data[key] = undefined })
     
-    if ( sync === true ) this.syncOriginal()
+    if ( sync === true ) this.syncOriginal(attr)
     
     return this
+  }
+  
+  /**
+   * Clear all attributes on the model
+   * 
+   * @apram {Boolean} sync
+   * @return this model
+   */
+  clear(sync = false) {
+    return this.unset(this.keys(), sync)
   }
   
   /**
@@ -106,15 +127,19 @@ class Model {
    * @param {String} attr
    * @return any
    */
-  getOriginal(attr) {
+  getOriginal(attr = null) {
     return attr ? this.original[attr] : _.clone(this.original)
   }
   
   /**
-   * Sync the original attributes with the current ones
+   * Sync the original attributes state
+   * 
+   * @param {String|Array} attr
+   * @return this model
    */
-  syncOriginal() {
-    this.original = _.clone(this.data)
+  syncOriginal(attr) {
+    this.original = this.pick(attr || this.keys())
+    return this
   }
   
   /**
@@ -123,7 +148,7 @@ class Model {
    * @return plain object
    */
   getDirty() {
-    return _.pick(this.data, (val, attr) => val !== this.getOriginal(attr))
+    return this.pick((value, attr) => value !== this.getOriginal(attr))
   }
   
   /**
@@ -132,20 +157,10 @@ class Model {
    * @param {String} attr
    * @return boolean
    */
-  isDirty(attr) {
+  isDirty(attr = null) {
     var dirty = this.getDirty()
-
+    
     return attr ? _.has(dirty, attr) : !_.isEmpty(dirty)
-  }
-  
-  /**
-   * Pick specific attributes
-   * 
-   * @param {Array} attrs
-   * @return plain object
-   */
-  pick(...attrs) {
-    return _.pick(this.data, ...attrs)
   }
   
   /**
@@ -167,5 +182,10 @@ class Model {
   
 }
 
+// underscore methods
+['keys', 'values', 'pairs', 'invert', 'pick', 'omit', 'isEmpty'].forEach(fn => {
+  Model.prototype[fn] = function () { return _[fn](this.data, ...arguments) }
+})
+
 // exports
-module.exports = Model
+export default Model
