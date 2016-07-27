@@ -1,6 +1,6 @@
 
-import Events from './events'
-import _ = from 'underscore'
+import EventEmitter from './events'
+import _ from 'underscore'
 
 /**
  * Data Model Class
@@ -18,7 +18,7 @@ class Model {
     this.original = {}
     
     // init model events
-    this._events = new Events
+    this._events = new EventEmitter()
     this.registerEvents()
     
     // assign default attributes
