@@ -5,7 +5,7 @@ import Promise from 'bluebird'
 /**
  * Model Event Emitter Class
  */
-class Events extends EventeEmitter {
+class ModelEvents extends EventEmitter {
   
   /**
    * Add a handler for the given event
@@ -15,10 +15,7 @@ class Events extends EventeEmitter {
    * @return this
    */
   on(event, fn) {
-    event.split(' ').forEach(name => {
-      if ( name ) this.super.on(name, fn)
-    })
-    
+    event.split(' ').forEach(name => { name && super.on(name, fn) })
     return this
   }
   
@@ -30,10 +27,7 @@ class Events extends EventeEmitter {
    * @return this
    */
   once(event, fn) {
-    event.split(' ').forEach(name => {
-      if ( name ) this.super.once(name, fn)
-    })
-    
+    event.split(' ').forEach(name => { name && super.once(name, fn) })
     return this
   }
   
@@ -45,9 +39,7 @@ class Events extends EventeEmitter {
    * @return promise
    */
   emit(event, ...args) {
-    return Promise.reduce(this.listeners(event), fn => {
-      return fn(...args)
-    })
+    return Promise.reduce(this.listeners(event), fn => fn(...args))
   }
   
   /**
@@ -67,4 +59,4 @@ class Events extends EventeEmitter {
 }
 
 // exports
-export default Events
+export default ModelEvents
