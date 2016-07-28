@@ -11,11 +11,11 @@ describe("Test Events", function () {
   
   var events
   
-  beforeEach(function () {
-    events = new EventEmitter()
-  })
-  
   describe("on()", function () {
+    
+    beforeEach(function () {
+      events = new EventEmitter()
+    })
     
     it("stores handlers by event name", function () {
       events.on('event', function() {})
@@ -72,6 +72,66 @@ describe("Test Events", function () {
     
   })
   
-  
+  describe("emit()", function () {
+    
+    var counter
+    
+    beforeEach(function () {
+      counter = 0
+      events = new EventEmitter()
+      
+      events
+        .on('event', function () {
+          assert.equal(++counter, 1)
+        })
+        .on('event', function () {
+          assert.equal(++counter, 2)
+        })
+    })
+    
+    it.skip("triggers some event by name", function () {
+      events.emit('event')
+    })
+    
+    it.skip("triggers events with parameters passed in", function () {
+      events.on('event', function (arg) {
+        counter = 0
+        assert.equal(arg, 'foo')
+      })
+      
+      events.emit('event', "foo").then(function() {
+        assert.equal(counter, 0)
+      })
+    })
+    
+    it.skip("fails if an error is thrown", function() {
+      events.on('event', function () {
+        throw new Error("Fail !")
+      })
+      
+      events.emit('event').catch(function(err) {
+        assert.instanceOf(err, Error)
+        assert.equal(err.message, "Fail !")
+      })
+    })
+    
+    it.skip("! rejected promise didn't stop the other promises", function (done) {
+      events.on('event', function (val) {
+        setTimeout(function() {
+          counter = val
+        }, 30)
+      })
+      events.on('event', function () {
+        throw new Error
+      })
+      
+      events.emit('event', 20).catch(noop)
+      setTimeout(function() {
+        assert.equal(counter, 2)
+        done()
+      }, 100)
+    })
+    
+  })
   
 })
