@@ -51,17 +51,17 @@ describe("Test Events", function () {
     })
     
     it("removes all handlers of a specified event", function () {
-      events._events['event'] = [noop, noop]
+      events.on('event', noop).on("event", noop)
       
       assert.lengthOf(events.listeners('event'), 2)
       
-      events.off('vent')
+      events.off('event')
       
-      assert.lengthOf(events.listeners('event'), 2)
+      assert.lengthOf(events.listeners('event'), 0)
     })
     
     it("removes all defined listeners for all events", function () {
-      events._events['event'] = [noop, noop, noop]
+      events.on('event', noop).on("event", noop).on("event", noop)
       
       assert.lengthOf(events.listeners('event'), 3)
       

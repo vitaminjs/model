@@ -50,8 +50,8 @@ class ModelEvents extends EventEmitter {
    * @return this
    */
   off(event, fn) {
-    if ( fn ) this.removeListener(event, fn)
-    else this.removeAllListeners(event)
+    if ( fn ) this.removeListener(...arguments)
+    else this.removeAllListeners(...arguments)
     
     return this
   }
