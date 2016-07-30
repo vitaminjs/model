@@ -29,15 +29,6 @@ class Model {
   }
   
   /**
-   * Model default attributes
-   * 
-   * @type {Object}
-   */
-  get defaults() {
-    return {}
-  }
-  
-  /**
    * Parse attributes values
    * 
    * @param {Object} data
@@ -240,6 +231,27 @@ class Model {
 .forEach(fn => {
   Model.prototype[fn] = function () { return _[fn](this.data, ...arguments) }
 })
+
+// static methods
+Model.extend = function (props, statics) {
+  var parent = this
+  var child = function () { parent.apply(this, arguments) }
+  
+  // use custom constructor
+  if ( _.has(props, 'constructor') ) child = props.constructor
+  
+  // set the prototype chain to inherit from `parent`
+  child.prototype = Object.create(parent.prototype)
+  
+  // add static and instance properties
+  _.extend(child, parent, statics)
+  _.extend(child.prototype, props)
+  
+  // set the default constructor
+  child.prototype.constructor = child
+  
+  return child
+}
 
 // exports
 export default Model

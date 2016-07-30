@@ -6,6 +6,34 @@ var assert = require('chai').assert
 var Model = require('../lib/model').default
 
 describe("Test Model", function() {
+  
+  describe("extend()", function() {
+
+    it("returns a sub model class", function() {
+      var A = Model.extend()
+      var B = A.extend()
+      var C = B.extend()
+
+      assert.instanceOf(A.prototype, Model)
+      assert.instanceOf(B.prototype, Model)
+      assert.instanceOf(C.prototype, Model)
+    })
+
+    it("adds instance properties", function() {
+      var A = Model.extend({
+        prop1: "foo",
+        method1: function() {}
+      })
+      var B = A.extend({
+        method2: function() {}
+      })
+
+      assert.property(A.prototype, 'prop1')
+      assert.property(A.prototype, 'method1')
+      assert.property(B.prototype, 'method2')
+    })
+
+  })
 
   describe("Data manipulation", function() {
 
