@@ -29,6 +29,24 @@ class Model {
   }
   
   /**
+   * Define the primary key name
+   * 
+   * @type {String}
+   */
+  get primaryKey() {
+    return null
+  }
+  
+  /**
+   * Model default attributes
+   * 
+   * @type {Object}
+   */
+  get defaults() {
+    return {}
+  }
+  
+  /**
    * Parse attributes values
    * 
    * @param {Object} data
@@ -50,6 +68,25 @@ class Model {
     }
     
     return this
+  }
+  
+  /**
+   * Set the primary key value
+   * 
+   * @param {Any} id
+   * @return this model
+   */
+  setId(id) {
+    return this.set(this.primaryKey, id)
+  }
+  
+  /**
+   * Get the primary key value
+   * 
+   * @return any
+   */
+  getId() {
+    return this.get(this.primaryKey)
   }
   
   /**
@@ -224,34 +261,50 @@ class Model {
     // do nothing
   }
   
+  /**
+   * Inheritance helper
+   * 
+   * @param {Object} props
+   * @param {Object} statics
+   * @return constructor function
+   */
+  static extend(props = {}, statics = {}) {
+    var parent = this
+    var child = function () { parent.apply(this, arguments) }
+    
+    // use custom constructor
+    if ( _.has(props, 'constructor') ) child = props.constructor
+    
+    // set the prototype chain to inherit from `parent`
+    child.prototype = Object.create(parent.prototype, {
+      constructor: { value: child, writable: true, configurable: true }
+    })
+    
+    // add static and instance properties
+    _.extend(child, statics)
+    _.extend(child.prototype, props)
+    
+    // fix extending static properties
+    Object.setPrototypeOf ? Object.setPrototypeOf(child, parent) : child.__proto__ = parent
+    
+    return child
+  }
+  
 }
 
 // underscore methods
 ['keys', 'values', 'pairs', 'invert', 'pick', 'omit', 'isEmpty', 'has']
 .forEach(fn => {
-  Model.prototype[fn] = function () { return _[fn](this.data, ...arguments) }
+  
+  Object.defineProperty(Model.prototype, fn, {
+    writable: true,
+    configurable: true,
+    value: function () {
+      return _[fn](this.data, ...arguments)
+    }
+  })
+  
 })
-
-// static methods
-Model.extend = function (props, statics) {
-  var parent = this
-  var child = function () { parent.apply(this, arguments) }
-  
-  // use custom constructor
-  if ( _.has(props, 'constructor') ) child = props.constructor
-  
-  // set the prototype chain to inherit from `parent`
-  child.prototype = Object.create(parent.prototype)
-  
-  // add static and instance properties
-  _.extend(child, parent, statics)
-  _.extend(child.prototype, props)
-  
-  // set the default constructor
-  child.prototype.constructor = child
-  
-  return child
-}
 
 // exports
 export default Model

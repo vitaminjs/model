@@ -1,6 +1,6 @@
 {
   "name": "vitamin-model",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Base model class for vitamin",
   "main": "lib/index.js",
   "directories": {

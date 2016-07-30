@@ -12,7 +12,11 @@ describe("Test Model", function() {
     it("returns a sub model class", function() {
       var A = Model.extend()
       var B = A.extend()
-      var C = B.extend()
+      var C = B.extend({
+        constructor: function () {
+          B.call(this)
+        }
+      })
 
       assert.instanceOf(A.prototype, Model)
       assert.instanceOf(B.prototype, Model)
