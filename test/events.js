@@ -89,11 +89,11 @@ describe("Test Events", function () {
         })
     })
     
-    it.skip("triggers some event by name", function () {
+    it("triggers some event by name", function () {
       events.emit('event')
     })
     
-    it.skip("triggers events with parameters passed in", function () {
+    it("triggers events with parameters passed in", function () {
       events.on('event', function (arg) {
         counter = 0
         assert.equal(arg, 'foo')
@@ -104,7 +104,7 @@ describe("Test Events", function () {
       })
     })
     
-    it.skip("fails if an error is thrown", function() {
+    it("fails if an error is thrown", function() {
       events.on('event', function () {
         throw new Error("Fail !")
       })

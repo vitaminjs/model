@@ -39,7 +39,7 @@ class ModelEvents extends EventEmitter {
    * @return promise
    */
   emit(event, ...args) {
-    return Promise.reduce(this.listeners(event), fn => fn(...args))
+    return Promise.map(this.listeners(event), fn => fn(...args))
   }
   
   /**
