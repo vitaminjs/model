@@ -29,24 +29,6 @@ class Model {
   }
   
   /**
-   * Define the primary key name
-   * 
-   * @type {String}
-   */
-  get primaryKey() {
-    return null
-  }
-  
-  /**
-   * Model default attributes
-   * 
-   * @type {Object}
-   */
-  get defaults() {
-    return {}
-  }
-  
-  /**
    * Parse attributes values
    * 
    * @param {Object} data
@@ -291,6 +273,20 @@ class Model {
   }
   
 }
+
+/**
+ * Define the primary key name
+ * 
+ * @type {String}
+ */
+Model.prototype.primaryKey = 'id'
+
+/**
+ * Define the model default attributes
+ * 
+ * @type {Object}
+ */
+Model.prototype.defaults = {}
 
 // underscore methods
 ['keys', 'values', 'pairs', 'invert', 'pick', 'omit', 'isEmpty', 'has']
