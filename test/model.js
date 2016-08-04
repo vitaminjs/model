@@ -36,6 +36,15 @@ describe("Test Model", function() {
       assert.property(A.prototype, 'method1')
       assert.property(B.prototype, 'method2')
     })
+    
+    it("adds static properties", function () {
+      var A = Model.extend(null, {
+        foo: () => {}
+      })
+      
+      assert.property(A, 'foo')
+      assert.isFunction(A.foo)
+    })
 
   })
 

@@ -13,7 +13,7 @@ class Model {
    * @param {Object} data
    * @constructor
    */
-  constructor(data) {
+  constructor(data = {}) {
     this.data = {}
     this.original = {}
     
@@ -45,7 +45,7 @@ class Model {
    * @return this model
    */
   fill(data) {
-    for (let name in this.parse(data || {}) ) {
+    for (let name in this.parse(data) ) {
       this.set(name, data[name])
     }
     
@@ -99,6 +99,31 @@ class Model {
     var value = this.data[attr]
     
     return _.isUndefined(value) ? defaultValue : value
+  }
+  
+  /**
+   * Set the model raw data
+   * 
+   * @param {Object} data
+   * @param {Boolean} sync
+   * @return this model
+   */
+  setData(data, sync = true) {
+     _.assign(this.data, data)
+    
+    // sync original attributes with the current state
+    if ( sync === true ) this.syncOriginal()
+    
+    return this
+  }
+  
+  /**
+   * Get the model raw data
+   * 
+   * @return plain object
+   */
+  getData() {
+    return _.clone(this.data)
   }
   
   /**
@@ -178,9 +203,10 @@ class Model {
   toJSON() {
     var json = {}
     
-    return _.keys(this.data).forEach((attr) => {
+    _.keys(this.data).forEach((attr) => {
       var value = this.get(attr)
       
+      // do not append undefined attributes
       if (! _.isUndefined(value) ) json[attr] = value
     })
     
@@ -232,6 +258,78 @@ class Model {
   off(event, fn) {
     this._events.off(...arguments)
     return this
+  }
+  
+  /**
+   * 
+   * 
+   * @return array
+   */
+  keys() {
+    return _.keys(this.data)
+  }
+  
+  /**
+   * 
+   * 
+   * @return array
+   */
+  values() {
+    return _.values(this.data)
+  }
+  
+  /**
+   * 
+   * 
+   * @return array
+   */
+  pairs() {
+    return _.pairs(this.data)
+  }
+  
+  /**
+   * 
+   * 
+   * @return plain object
+   */
+  invert() {
+    return _.invert(this.data)
+  }
+  
+  /**
+   * 
+   * 
+   * @return plain object
+   */
+  pick(...attrs) {
+    return _.pick(this.data, ...attrs)
+  }
+  
+  /**
+   * 
+   * 
+   * @return plain object
+   */
+  omit(...attrs) {
+    return _.omit(this.data, ...attrs)
+  }
+  
+  /**
+   * 
+   * 
+   * @return boolean
+   */
+  isEmpty() {
+    return _.isEmpty(this.data)
+  }
+  
+  /**
+   * 
+   * 
+   * @return boolean
+   */
+  has(attr) {
+    return _.has(this.data, attr)
   }
   
   /**
@@ -287,20 +385,6 @@ Model.prototype.primaryKey = 'id'
  * @type {Object}
  */
 Model.prototype.defaults = {}
-
-// underscore methods
-['keys', 'values', 'pairs', 'invert', 'pick', 'omit', 'isEmpty', 'has']
-.forEach(fn => {
-  
-  Object.defineProperty(Model.prototype, fn, {
-    writable: true,
-    configurable: true,
-    value: function () {
-      return _[fn](this.data, ...arguments)
-    }
-  })
-  
-})
 
 // exports
 export default Model
