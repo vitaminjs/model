@@ -32,14 +32,14 @@ class ModelEvents extends EventEmitter {
   }
   
   /**
-   * Trigger an event with parameters
+   * Trigger sequentially an event with arguments
    * 
    * @param {String} event
    * @param {Array} args
    * @return promise
    */
   emit(event, ...args) {
-    return Promise.map(this.listeners(event), fn => fn(...args))
+    return Promise.reduce(this.listeners(event), (_, fn) => fn(...args), 0)
   }
   
   /**

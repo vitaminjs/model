@@ -115,23 +115,6 @@ describe("Test Events", function () {
       })
     })
     
-    it.skip("! rejected promise didn't stop the other promises", function (done) {
-      events.on('event', function (val) {
-        setTimeout(function() {
-          counter = val
-        }, 30)
-      })
-      events.on('event', function () {
-        throw new Error
-      })
-      
-      events.emit('event', 20).catch(noop)
-      setTimeout(function() {
-        assert.equal(counter, 2)
-        done()
-      }, 100)
-    })
-    
   })
   
 })
