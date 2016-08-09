@@ -170,7 +170,9 @@ class Model {
    * @return this model
    */
   syncOriginal(attr) {
-    this.original = this.pick(attr || this.keys())
+    if ( _.isEmpty(attr) ) this.original = _.clone(this.data)
+    else _.extend(this.original, this.pick(attr))
+    
     return this
   }
   
