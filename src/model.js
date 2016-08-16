@@ -45,7 +45,7 @@ class Model {
    * @return this model
    */
   fill(data) {
-    for (let name in this.parse(data) ) {
+    for ( let name in this.parse(data) ) {
       this.set(name, data[name])
     }
     
@@ -263,7 +263,7 @@ class Model {
   }
   
   /**
-   * 
+   * Get all the names of this model attributes
    * 
    * @return array
    */
@@ -272,7 +272,7 @@ class Model {
   }
   
   /**
-   * 
+   * Get all the values of this model attributes
    * 
    * @return array
    */
@@ -281,7 +281,7 @@ class Model {
   }
   
   /**
-   * 
+   * Convert this model attributes into `[key, value]` pairs
    * 
    * @return array
    */
@@ -290,7 +290,7 @@ class Model {
   }
   
   /**
-   * 
+   * Return a copy of model's data, where the attributes become the values and vis versa
    * 
    * @return plain object
    */
@@ -299,7 +299,7 @@ class Model {
   }
   
   /**
-   * 
+   * Get a copy of the model's data filtered to have only whitelisted attributes
    * 
    * @return plain object
    */
@@ -308,7 +308,7 @@ class Model {
   }
   
   /**
-   * 
+   * Get a copy of the model's data filtered to omit the blacklisted attributes
    * 
    * @return plain object
    */
@@ -317,7 +317,7 @@ class Model {
   }
   
   /**
-   * 
+   * Determine if this model contains no values
    * 
    * @return boolean
    */
@@ -326,7 +326,7 @@ class Model {
   }
   
   /**
-   * 
+   * Determine if this model contain the given attribute name
    * 
    * @return boolean
    */
@@ -379,14 +379,22 @@ class Model {
  * 
  * @type {String}
  */
-Model.prototype.primaryKey = 'id'
+Object.defineProperty(Model.prototype, 'idAttribute', {
+  value: 'id',
+  writable: true,
+  configurable: true
+})
 
 /**
  * Define the model default attributes
  * 
  * @type {Object}
  */
-Model.prototype.defaults = {}
+Object.defineProperty(Model.prototype, 'defaults', {
+  value: {},
+  writable: true,
+  configurable: true
+})
 
 // exports
 export default Model
