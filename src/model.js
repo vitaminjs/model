@@ -10,17 +10,60 @@ class Model {
    * Model constructor
    * 
    * @param {Object} data
+   * @param {Boolean} exists
    * @constructor
    */
-  constructor(data = {}) {
+  constructor(data = {}, exists = false) {
     this.data = {}
     this.original = {}
+    this.exists = exists
     
     // assign default attributes
     _.assign(this.data, _.result(this, 'defaults'))
     
-    // fill model attributes
-    this.fill(data)
+    // fill the model attributes
+    if (! exists ) this.fill(data)
+    else this.setData(data, true)
+  }
+  
+  /**
+   * Inheritance helper
+   * 
+   * @param {Object} props
+   * @param {Object} statics
+   * @return constructor function
+   */
+  static extend(props = {}, statics = {}) {
+    var parent = this
+    var child = function () { parent.apply(this, arguments) }
+    
+    // use custom constructor
+    if ( _.has(props, 'constructor') ) child = props.constructor
+    
+    // set the prototype chain to inherit from `parent`
+    child.prototype = Object.create(parent.prototype, {
+      constructor: { value: child, writable: true, configurable: true }
+    })
+    
+    // add static and instance properties
+    _.extend(child, statics)
+    _.extend(child.prototype, props)
+    
+    // fix extending static properties
+    Object.setPrototypeOf ? Object.setPrototypeOf(child, parent) : child.__proto__ = parent
+    
+    return child
+  }
+  
+  /**
+   * A factory helper to instanciate models without using `new`
+   * 
+   * @param {Object} data
+   * @param {Boolean} exists
+   * @return model instance
+   */
+  static make(data = {}, exists = false) {
+    return new this(...arguments)
   }
   
   /**
@@ -104,7 +147,7 @@ class Model {
    * @return this model
    */
   setData(data, sync = true) {
-     _.assign(this.data, data)
+    _.assign(this.data, data)
     
     // sync original attributes with the current state
     if ( sync === true ) this.syncOriginal()
@@ -280,35 +323,6 @@ class Model {
    */
   has(attr) {
     return _.has(this.data, attr)
-  }
-  
-  /**
-   * Inheritance helper
-   * 
-   * @param {Object} props
-   * @param {Object} statics
-   * @return constructor function
-   */
-  static extend(props = {}, statics = {}) {
-    var parent = this
-    var child = function () { parent.apply(this, arguments) }
-    
-    // use custom constructor
-    if ( _.has(props, 'constructor') ) child = props.constructor
-    
-    // set the prototype chain to inherit from `parent`
-    child.prototype = Object.create(parent.prototype, {
-      constructor: { value: child, writable: true, configurable: true }
-    })
-    
-    // add static and instance properties
-    _.extend(child, statics)
-    _.extend(child.prototype, props)
-    
-    // fix extending static properties
-    Object.setPrototypeOf ? Object.setPrototypeOf(child, parent) : child.__proto__ = parent
-    
-    return child
   }
   
 }
