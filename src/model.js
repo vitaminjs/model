@@ -1,5 +1,4 @@
 
-import EventEmitter from './events'
 import _ from 'underscore'
 
 /**
@@ -16,10 +15,6 @@ class Model {
   constructor(data = {}) {
     this.data = {}
     this.original = {}
-    
-    // init model events
-    this._events = new EventEmitter()
-    this.registerEvents()
     
     // assign default attributes
     _.assign(this.data, _.result(this, 'defaults'))
@@ -53,22 +48,22 @@ class Model {
   }
   
   /**
-   * Set the primary key value
+   * Set the ID value
    * 
    * @param {Any} id
    * @return this model
    */
   setId(id) {
-    return this.set(this.primaryKey, id)
+    return this.set(this.idAttribute, id)
   }
   
   /**
-   * Get the primary key value
+   * Get the ID value
    * 
    * @return any
    */
   getId() {
-    return this.get(this.primaryKey)
+    return this.get(this.idAttribute)
   }
   
   /**
@@ -216,53 +211,6 @@ class Model {
   }
   
   /**
-   * Add a handler for the given event
-   * 
-   * @param {String} event
-   * @param {Function} fn
-   * @return this model
-   */
-  on(event, fn) {
-    this._events.on(...arguments)
-    return this
-  }
-  
-  /**
-   * Add a one time handler for the given event
-   * 
-   * @param {String} event
-   * @param {Function} fn
-   * @return this model
-   */
-  once(event, fn) {
-    this._events.once(...arguments)
-    return this
-  }
-  
-  /**
-   * Trigger an event with parameters
-   * 
-   * @param {String} event
-   * @param {Array} args
-   * @return promise
-   */
-  emit(event, ...args) {
-    return this._events.emit(...arguments)
-  }
-  
-  /**
-   * Remove an event handler
-   * 
-   * @param {String} event
-   * @param {Function} fn
-   * @return this model
-   */
-  off(event, fn) {
-    this._events.off(...arguments)
-    return this
-  }
-  
-  /**
    * Get all the names of this model attributes
    * 
    * @return array
@@ -332,15 +280,6 @@ class Model {
    */
   has(attr) {
     return _.has(this.data, attr)
-  }
-  
-  /**
-   * Override it to register the model events
-   * 
-   * @private
-   */
-  registerEvents() {
-    // do nothing
   }
   
   /**
