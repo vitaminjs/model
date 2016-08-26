@@ -3,7 +3,7 @@
 /* global beforeEach */
 
 var assert = require('chai').assert
-var Model = require('../lib/model').default
+var Model = require('../lib')
 
 describe("Test Model", function() {
   
