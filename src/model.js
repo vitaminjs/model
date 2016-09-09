@@ -84,10 +84,24 @@ class Model {
    */
   fill(data) {
     for ( let name in this.parse(data) ) {
-      this.set(name, data[name])
+      this.isFillable(name) && this.set(name, data[name])
     }
     
     return this
+  }
+  
+  /**
+   * Determine if the given attribute is mass assignable
+   * 
+   * @param {String} attr
+   * @return boolean
+   */
+  isFillable(attr) {
+    if ( _.isBoolean(this.fillable) ) return this.fillable
+    
+    if ( _.contains(this.fillable, '-' + attr) ) return false
+    
+    return _.contains(this.fillable, attr)
   }
   
   /**
@@ -345,6 +359,17 @@ Object.defineProperty(Model.prototype, 'idAttribute', {
  */
 Object.defineProperty(Model.prototype, 'defaults', {
   value: {},
+  writable: true,
+  configurable: true
+})
+
+/**
+ * Determine the attributes that are mass assignable
+ * 
+ * @type {Boolean|Array}
+ */
+Object.defineProperty(Model.prototype, 'fillable', {
+  value: true,
   writable: true,
   configurable: true
 })
