@@ -1,7 +1,7 @@
 
 import {
   has, extend, assign, result, clone, values, omit, pick,
-  isUndefined, isArray, isObject, isEmpty, pairs, invert
+  isUndefined, isArray, isObject, isEmpty, isString, pairs, invert
 } from 'underscore'
 
 /**
@@ -326,6 +326,27 @@ class Model {
    */
   has(attr) {
     return has(this.data, attr)
+  }
+  
+  /**
+   * Determine if the pair key/value exists in the model
+   * 
+   * @param {String|Object} key
+   * @param {Any} value
+   * @return boolean
+   */
+  isMatch(key, value) {
+    if ( isEmpty(key) && this.isEmpty() ) return true
+    
+    if ( isString(key) ) {
+      return this.has(key) && this.get(key) == value
+    }
+    
+    for ( let attr in key ) {
+      if ( !this.has(attr) || this.get(attr) != key[attr] ) return false
+    }
+    
+    return true
   }
   
 }
