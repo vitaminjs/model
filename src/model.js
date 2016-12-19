@@ -1,5 +1,8 @@
 
-import _ from 'underscore'
+import {
+  has, extend, assign, result, clone, values, omit, pick,
+  isUndefined, isArray, isObject, isEmpty, pairs, invert
+} from 'underscore'
 
 /**
  * Data Model Class
@@ -19,7 +22,7 @@ class Model {
     this.exists = exists
     
     // assign default attributes
-    _.assign(this.data, _.result(this, 'defaults'))
+    assign(this.data, result(this, 'defaults'))
     
     // fill the model attributes
     if (! exists ) this.fill(data)
@@ -38,7 +41,7 @@ class Model {
     var child = function () { parent.apply(this, arguments) }
     
     // use custom constructor
-    if ( _.has(props, 'constructor') ) child = props.constructor
+    if ( has(props, 'constructor') ) child = props.constructor
     
     // set the prototype chain to inherit from `parent`
     child.prototype = Object.create(parent.prototype, {
@@ -46,8 +49,8 @@ class Model {
     })
     
     // add static and instance properties
-    _.extend(child, statics)
-    _.extend(child.prototype, props)
+    extend(child, statics)
+    extend(child.prototype, props)
     
     // fix extending static properties
     Object.setPrototypeOf ? Object.setPrototypeOf(child, parent) : child.__proto__ = parent
@@ -117,7 +120,7 @@ class Model {
    * @return this model
    */
   set(attr, value) {
-    if ( _.isObject(attr) ) return this.fill(attr)
+    if ( isObject(attr) ) return this.fill(attr)
     
     if ( attr ) this.data[attr] = value
     
@@ -132,11 +135,11 @@ class Model {
    * @return any
    */
   get(attr, defaultValue) {
-    if (! attr ) return _.clone(this.data)
+    if (! attr ) return clone(this.data)
     
     var value = this.data[attr]
     
-    return _.isUndefined(value) ? defaultValue : value
+    return isUndefined(value) ? defaultValue : value
   }
   
   /**
@@ -147,7 +150,7 @@ class Model {
    * @return this model
    */
   setData(data, sync = true) {
-    _.assign(this.data, data)
+    assign(this.data, data)
     
     // sync original attributes with the current state
     if ( sync === true ) this.syncOriginal()
@@ -161,7 +164,7 @@ class Model {
    * @return plain object
    */
   getData() {
-    return _.clone(this.data)
+    return clone(this.data)
   }
   
   /**
@@ -172,7 +175,7 @@ class Model {
    * @return this model
    */
   unset(attr, sync = false) {
-    if (! _.isArray(attr) ) attr = [attr]
+    if (! isArray(attr) ) attr = [attr]
     
     attr.forEach(key => { this.data[key] = undefined })
     
@@ -198,7 +201,7 @@ class Model {
    * @return any
    */
   getOriginal(attr = null) {
-    return attr ? this.original[attr] : _.clone(this.original)
+    return attr ? this.original[attr] : clone(this.original)
   }
   
   /**
@@ -208,8 +211,8 @@ class Model {
    * @return this model
    */
   syncOriginal(attr) {
-    if ( _.isEmpty(attr) ) this.original = _.clone(this.data)
-    else _.extend(this.original, this.pick(attr))
+    if ( isEmpty(attr) ) this.original = clone(this.data)
+    else extend(this.original, this.pick(attr))
     
     return this
   }
@@ -232,7 +235,7 @@ class Model {
   isDirty(attr = null) {
     var dirty = this.getDirty()
     
-    return attr ? _.has(dirty, attr) : !_.isEmpty(dirty)
+    return attr ? has(dirty, attr) : !isEmpty(dirty)
   }
   
   /**
@@ -243,11 +246,11 @@ class Model {
   toJSON() {
     var json = {}
     
-    _.keys(this.data).forEach((attr) => {
+    Object.keys(this.data).forEach((attr) => {
       var value = this.get(attr)
       
       // do not append undefined attributes
-      if (! _.isUndefined(value) ) json[attr] = value
+      if (! isUndefined(value) ) json[attr] = value
     })
     
     return json
@@ -259,7 +262,7 @@ class Model {
    * @return array
    */
   keys() {
-    return _.keys(this.data)
+    return Object.keys(this.data)
   }
   
   /**
@@ -268,7 +271,7 @@ class Model {
    * @return array
    */
   values() {
-    return _.values(this.data)
+    return values(this.data)
   }
   
   /**
@@ -277,7 +280,7 @@ class Model {
    * @return array
    */
   pairs() {
-    return _.pairs(this.data)
+    return pairs(this.data)
   }
   
   /**
@@ -286,7 +289,7 @@ class Model {
    * @return plain object
    */
   invert() {
-    return _.invert(this.data)
+    return invert(this.data)
   }
   
   /**
@@ -295,7 +298,7 @@ class Model {
    * @return plain object
    */
   pick(...attrs) {
-    return _.pick(this.data, ...attrs)
+    return pick(this.data, ...attrs)
   }
   
   /**
@@ -304,7 +307,7 @@ class Model {
    * @return plain object
    */
   omit(...attrs) {
-    return _.omit(this.data, ...attrs)
+    return omit(this.data, ...attrs)
   }
   
   /**
@@ -313,7 +316,7 @@ class Model {
    * @return boolean
    */
   isEmpty() {
-    return _.isEmpty(this.data)
+    return isEmpty(this.data)
   }
   
   /**
@@ -322,7 +325,7 @@ class Model {
    * @return boolean
    */
   has(attr) {
-    return _.has(this.data, attr)
+    return has(this.data, attr)
   }
   
 }
